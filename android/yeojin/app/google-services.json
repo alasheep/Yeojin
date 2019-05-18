@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "1028360976451",
+    "firebase_url": "https://api-project-1028360976451.firebaseio.com",
+    "project_id": "api-project-1028360976451",
+    "storage_bucket": "api-project-1028360976451.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028360976451:android:898a09e79d62d68a",
+        "android_client_info": {
+          "package_name": "com.alasheep.findchild"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1028360976451-c3rc9gkcc0oaojohp6bg6186uckrisok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBelt3kT675E6FiO7eu9udRfaKWn9hDIpM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028360976451-c3rc9gkcc0oaojohp6bg6186uckrisok.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028360976451:android:b41a08054a62076b",
+        "android_client_info": {
+          "package_name": "com.alasheep.yeojin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1028360976451-c3rc9gkcc0oaojohp6bg6186uckrisok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBelt3kT675E6FiO7eu9udRfaKWn9hDIpM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1028360976451-c3rc9gkcc0oaojohp6bg6186uckrisok.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
