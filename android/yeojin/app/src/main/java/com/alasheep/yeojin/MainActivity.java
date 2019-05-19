@@ -1,9 +1,11 @@
 package com.alasheep.yeojin;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -19,10 +21,41 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.alasheep.yeojin.firestore.Token;
+import com.alasheep.yeojin.retrofit2.RetrofitAPI;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = "soongil";
+
+    private Context mContext;
+
+    String storedToken = "";
+
+    private Retrofit mRetrofit;
+    private RetrofitAPI mRetrofitAPI;
+
+    private FirebaseFirestore mFireStore;
+
+//    private Call<String> mCallFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +80,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         checkFcmToken();
+
+        setRetrofitInit();
+
+        if(storedToken!=null && !storedToken.isEmpty()) {
+//            callSaveToken();
+//            callCloudFunction();
+            callFireStore();
+        }
     }
 
     @Override
@@ -108,10 +149,128 @@ public class MainActivity extends AppCompatActivity
 
     private void checkFcmToken() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String storedToken = preferences.getString("token", null);
+        storedToken = preferences.getString("token", null);
         if(storedToken!=null) {
             Log.e(TAG, "stored token : " + storedToken);
             Toast.makeText(this, "stored token : "+ storedToken, Toast.LENGTH_LONG).show();
         }
     }
+
+    private Task<String> callCloudFunction() {
+        FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
+        Map<String,Object> data = new HashMap<>();
+        data.put("token",storedToken);
+
+        return mFunctions.getHttpsCallable("updateToken").call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        return (String)task.getResult().getData();
+                    }
+                });
+    }
+
+    private void callFireStore() {
+        mFireStore = FirebaseFirestore.getInstance();
+
+        DocumentReference doc = mFireStore.collection("push_token").document("yAmpQQ271chZWM82LtI2");
+        Token mToken = new Token(storedToken);
+        doc.set(mToken).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+
+    }
+
+    private void setRetrofitInit() {
+
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(RetrofitAPI.URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        mRetrofitAPI = mRetrofit.create(RetrofitAPI.class);
+    }
+
+    private void callSaveToken() {
+
+//        Token token = new Token(storedToken);
+//        Call<Token> call1 = mRetrofitAPI.saveToken(token);
+//        call1.enqueue(new Callback<Token>() {
+//            @Override
+//            public void onResponse(Call<Token> call, Response<Token> response) {
+//
+////                Toast.makeText(mContext,"api call success", Toast.LENGTH_LONG).show();;
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Token> call, Throwable t) {
+//                call.cancel();
+//
+////                Toast.makeText(mContext,"api call fail", Toast.LENGTH_LONG).show();;
+//
+//            }
+//        });
+
+//        HashMap<String,Object> tokens = new HashMap<>();
+//        tokens.put("fcm_device_token",storedToken);
+//
+//        mRetrofitAPI.saveToken(tokens).enqueue(new Callback<String>() {
+//            @Override
+//            public void onResponse(Call<String> call, Response<String> response) {
+//
+////                Toast.makeText(mContext,"api call success", Toast.LENGTH_LONG).show();;
+//            }
+//
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//                call.cancel();
+//
+////                Toast.makeText(mContext,"api call fail", Toast.LENGTH_LONG).show();;
+//
+//            }
+//        });
+
+        mRetrofitAPI.saveToken(storedToken).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+//                Toast.makeText(mContext,"api call success", Toast.LENGTH_LONG).show();;
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                call.cancel();
+
+//                Toast.makeText(mContext,"api call fail", Toast.LENGTH_LONG).show();;
+
+            }
+        });
+    }
+
+
+
+//    private Callback<String> mRetrofitCallback = new Callback<String>() {
+//
+//        @Override
+//        public void onResponse(Call<String> call, Response<String> response) {
+//            String result = response.body();
+//            Log.d(TAG, result);
+//
+//            Toast.makeText(mContext, "api result :" + result, Toast.LENGTH_LONG).show();
+//        }
+//
+//        @Override
+//        public void onFailure(Call<String> call, Throwable t) {
+//            t.printStackTrace();
+//
+//        }
+//    };
 }
