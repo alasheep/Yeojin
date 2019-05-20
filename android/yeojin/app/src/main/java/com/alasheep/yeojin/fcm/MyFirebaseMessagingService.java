@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import com.alasheep.yeojin.firestore.CurLocation;
 import com.alasheep.yeojin.firestore.Token;
+import com.alasheep.yeojin.gps.GpsTracker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -21,6 +25,26 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "soongil";
+    private GpsTracker mGpsTracker;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void dispatchMessage(Message msg) {
+            switch (msg.what) {
+                case 11:
+                    mGpsTracker = new GpsTracker(getApplicationContext());
+
+                    double latitude = mGpsTracker.getLatitude();
+                    double longtitude = mGpsTracker.getLongitude();
+
+                    Log.e(TAG, "latitude : " + latitude + ", longtitude : " + longtitude);
+
+                    callFireStore(latitude, longtitude);
+
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onNewToken(String refreshedToken) {
@@ -41,18 +65,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload : " + remoteMessage.getData());
 //            Toast.makeText(this, "message : "+remoteMessage.getData().toString() , Toast.LENGTH_LONG).show();
 
-//            callFireStore(11.111, 22.222);
-            try {
-                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                double longitude = location.getLongitude();
-                double latitude = location.getLatitude();
-
-                callFireStore(latitude, longitude);
-            }
-            catch (Exception e) {
-                Log.d(TAG, "error");
-            }
+            mHandler.sendEmptyMessage(11);
         }
 
     }
