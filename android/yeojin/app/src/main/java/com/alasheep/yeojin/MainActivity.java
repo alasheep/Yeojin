@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.alasheep.yeojin.firestore.Token;
+import com.alasheep.yeojin.game.flappybird.FlappyBirdMainActivity;
 import com.alasheep.yeojin.retrofit2.RetrofitAPI;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -148,6 +149,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Intent mIntent = null;
+
         if (id == R.id.nav_home) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
@@ -156,11 +159,13 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_tools) {
 
-        } else if (id == R.id.nav_share) {
-
+        } else if (id == R.id.nav_flappy_bird) {
+            mIntent = new Intent(this, FlappyBirdMainActivity.class);
         } else if (id == R.id.nav_send) {
 
         }
+
+        this.startActivity(mIntent);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

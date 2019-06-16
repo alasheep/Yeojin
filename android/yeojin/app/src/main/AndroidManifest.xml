@@ -42,6 +42,9 @@
             </intent-filter>
         </service>
 
+
+        <activity android:name=".game.flappybird.FlappyBirdMainActivity"/>
+
     </application>
 
 </manifest>
