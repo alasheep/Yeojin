@@ -3,6 +3,7 @@ package com.alasheep.yeojin.game.flappybird;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.alasheep.yeojin.R;
@@ -17,6 +18,7 @@ public class FlappyBirdMainActivity extends AppCompatActivity {
     }
 
     public void startGame(View view) {
+        Log.i("ImageButton", "clicked");
 
     }
 }
